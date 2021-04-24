@@ -51,7 +51,7 @@ class TestArcFaceLoss:
     n_classes = 32
     margin = 0.5
     scale = 60
-    loss_func = tf.keras.losses.CategoricalCrossentropy(from_logits=True)
+    loss_func = tf.keras.losses.CategoricalCrossentropy()
 
     @pytest.fixture
     def loss(self):

@@ -1,3 +1,5 @@
+from math import cos, sin
+
 import tensorflow as tf
 from tensorflow.keras.initializers import TruncatedNormal
 
@@ -32,3 +34,25 @@ class ArcfaceLayer(tf.keras.layers.Layer):
         config = super(ArcfaceLayer, self).get_config()
         config.update({"n_classes": self.n_classes, "seed": self.seed})
         return config
+
+
+class ArcFaceLoss(tf.keras.losses.Loss):
+    def __init__(self, loss_func, margin: float, scale: float, **kwargs):
+        self.loss_func = loss_func
+        self.margin = margin
+        self.scale = scale
+        self.cos_m = tf.constant(cos(self.margin))
+        self.sin_m = tf.constant(sin(self.margin))
+        super(ArcFaceLoss, self).__init__(**kwargs)
+
+    def call(self, y_true, y_pred):
+        cos_t = y_pred
+        sin_t = tf.sqrt(1 - cos_t ** 2)
+
+        # cos(t + m) = cos(t)cos(m) - sin(t)sin(m)
+        cos_t_plus_m = tf.subtract(cos_t * self.cos_m, sin_t * self.sin_m)
+
+        logits = tf.where(y_true > 0, cos_t_plus_m, cos_t)
+        logits = tf.multiply(logits, self.scale)
+        softmax = tf.nn.softmax(logits)
+        return self.loss_func(y_true, softmax)

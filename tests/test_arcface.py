@@ -47,10 +47,8 @@ class TestArcfaceLayer:
 
 
 class TestArcFaceLoss:
-    batch_size = 16
-    n_classes = 32
-    margin = 0.5
-    scale = 60
+    margin = 0.2 * np.pi
+    scale = 5
     loss_func = tf.keras.losses.CategoricalCrossentropy()
 
     @pytest.fixture
@@ -60,31 +58,27 @@ class TestArcFaceLoss:
         )
 
     def test_call(self, loss):
-        y_true = self._random_onehot(self.batch_size, self.n_classes).astype(np.int)
-        y_pred = self._random_cosine(self.batch_size, self.n_classes).astype(np.float32)
+        # fmt: off
+        y_true = np.array([
+            [0, 1],
+            [1, 0]
+        ], dtype=np.int)
+        angles = np.array([
+            [0.25 * np.pi, 0.20 * np.pi],
+            [0.45 * np.pi, 0.10 * np.pi],  # 0.45pi + 0.20pi (margin) > 0.5pi = pi/2
+        ], dtype=np.float32)
+        # fmt: on
+        y_pred = np.cos(angles)
 
-        loss_actual = loss.call(y_true, y_pred)
-
-        cos_t_plus_m = np.cos(
-            np.arccos(y_pred) + np.where(y_true > 0, np.cos(self.margin), 0)
-        )
+        # add margin to theta (angle) if corresponding class is true positive
+        cos_t_plus_m = np.cos(angles + np.where((y_true == 1), self.margin, 0))
+        # if cos(t + m) is negative, use cos(t)
+        cos_t_plus_m = np.where(cos_t_plus_m < 0, np.cos(angles), cos_t_plus_m)
         softmax = self._softmax(cos_t_plus_m * self.scale, axis=1)
         loss_expect = self.loss_func(y_true, softmax.astype(np.float32))
 
-        assert_almost_equal(loss_actual, loss_expect, decimal=3)
-
-    @staticmethod
-    def _random_onehot(n_samples: int, n_classes: int):
-        return np.eye(n_classes)[np.random.choice(n_classes, n_samples)]
-
-    @staticmethod
-    def _random_cosine(n_samples: int, n_classes: int):
-        """
-        generate [-1, 1) randomly
-        """
-        a = -1
-        b = 1
-        return (b - a) * np.random.rand(n_samples, n_classes) + a
+        loss_actual = loss.call(y_true, y_pred)
+        assert_almost_equal(loss_actual, loss_expect)
 
     @staticmethod
     def _softmax(x, axis=None):

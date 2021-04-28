@@ -51,6 +51,7 @@ class ArcFaceLoss(tf.keras.losses.Loss):
 
         # cos(t + m) = cos(t)cos(m) - sin(t)sin(m)
         cos_t_plus_m = tf.subtract(cos_t * self.cos_m, sin_t * self.sin_m)
+        cos_t_plus_m = tf.where(cos_t_plus_m > 0, cos_t_plus_m, cos_t)
 
         logits = tf.where(y_true > 0, cos_t_plus_m, cos_t)
         logits = tf.multiply(logits, self.scale)

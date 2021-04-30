@@ -8,16 +8,18 @@ from arcface import AdditiveAngularMarginLoss, Angle
 
 class TestAngleLayer:
     n_classes = 10
-    seed = 42
     feature_dimension = 256
     batch_size = 8
     weights_decay = 5e-4
+    initializer = tf.keras.initializers.TruncatedNormal()
     regularizer = tf.keras.regularizers.l2(weights_decay)
 
     @pytest.fixture
     def layer(self):
         return Angle(
-            n_classes=self.n_classes, regularizer=self.regularizer, seed=self.seed
+            n_classes=self.n_classes,
+            initializer=self.initializer,
+            regularizer=self.regularizer,
         )
 
     @pytest.fixture
@@ -47,8 +49,8 @@ class TestAngleLayer:
     def test_get_config(self, layer):
         config = layer.get_config()
         assert config.get("n_classes") == self.n_classes
+        assert config.get("initializer") == self.initializer
         assert config.get("regularizer") == self.regularizer
-        assert config.get("seed") == self.seed
 
 
 class TestArcFaceLoss:

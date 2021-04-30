@@ -3,10 +3,10 @@ import pytest
 import tensorflow as tf
 from numpy.testing import assert_almost_equal
 
-from arcface import ArcfaceLayer, ArcFaceLoss
+from arcface import Angle, ArcFaceLoss
 
 
-class TestArcfaceLayer:
+class TestAngleLayer:
     n_classes = 10
     seed = 42
     feature_dimension = 256
@@ -14,7 +14,7 @@ class TestArcfaceLayer:
 
     @pytest.fixture
     def layer(self):
-        return ArcfaceLayer(n_classes=self.n_classes, seed=self.seed)
+        return Angle(n_classes=self.n_classes, seed=self.seed)
 
     @pytest.fixture
     def tensor(self):

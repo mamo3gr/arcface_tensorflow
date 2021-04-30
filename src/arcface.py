@@ -4,9 +4,14 @@ import tensorflow as tf
 from tensorflow.keras.initializers import TruncatedNormal
 
 
-class ArcfaceLayer(tf.keras.layers.Layer):
+class Angle(tf.keras.layers.Layer):
+    """
+    Angles to a kind of centre for each class
+    (More precisely, not angle but cosine of the angle).
+    """
+
     def __init__(self, n_classes: int, seed=42, **kwargs):
-        super(ArcfaceLayer, self).__init__(**kwargs)
+        super(Angle, self).__init__(**kwargs)
         self.n_classes = n_classes
         self.seed = seed
 
@@ -17,7 +22,7 @@ class ArcfaceLayer(tf.keras.layers.Layer):
             initializer=TruncatedNormal(seed=self.seed),
             trainable=True,
         )
-        super(ArcfaceLayer, self).build(input_shape)
+        super(Angle, self).build(input_shape)
 
     def call(self, inputs, **kwargs):
         embeddings = inputs
@@ -31,7 +36,7 @@ class ArcfaceLayer(tf.keras.layers.Layer):
         return cos_t
 
     def get_config(self):
-        config = super(ArcfaceLayer, self).get_config()
+        config = super(Angle, self).get_config()
         config.update({"n_classes": self.n_classes, "seed": self.seed})
         return config
 

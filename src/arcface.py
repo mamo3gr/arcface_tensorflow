@@ -1,4 +1,5 @@
 from math import cos, sin
+from typing import Optional
 
 import tensorflow as tf
 from tensorflow.keras.initializers import TruncatedNormal
@@ -10,9 +11,16 @@ class Angle(tf.keras.layers.Layer):
     (More precisely, not angle but cosine of the angle).
     """
 
-    def __init__(self, n_classes: int, seed=42, **kwargs):
+    def __init__(
+        self,
+        n_classes: int,
+        regularizer: Optional[tf.keras.regularizers.Regularizer] = None,
+        seed=42,
+        **kwargs
+    ):
         super(Angle, self).__init__(**kwargs)
         self.n_classes = n_classes
+        self.regularizer = regularizer
         self.seed = seed
 
     def build(self, input_shape):
@@ -20,6 +28,7 @@ class Angle(tf.keras.layers.Layer):
             name="kernel",
             shape=(input_shape[-1], self.n_classes),
             initializer=TruncatedNormal(seed=self.seed),
+            regularizer=self.regularizer,
             trainable=True,
         )
         super(Angle, self).build(input_shape)
@@ -37,7 +46,13 @@ class Angle(tf.keras.layers.Layer):
 
     def get_config(self):
         config = super(Angle, self).get_config()
-        config.update({"n_classes": self.n_classes, "seed": self.seed})
+        config.update(
+            {
+                "n_classes": self.n_classes,
+                "regularizer": self.regularizer,
+                "seed": self.seed,
+            }
+        )
         return config
 
 

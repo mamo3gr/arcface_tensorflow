@@ -41,14 +41,14 @@ class Angle(tf.keras.layers.Layer):
         return config
 
 
-class ArcFaceLoss(tf.keras.losses.Loss):
+class AdditiveAngularMarginLoss(tf.keras.losses.Loss):
     def __init__(self, loss_func, margin: float, scale: float, **kwargs):
         self.loss_func = loss_func
         self.margin = margin
         self.scale = scale
         self.cos_m = tf.constant(cos(self.margin))
         self.sin_m = tf.constant(sin(self.margin))
-        super(ArcFaceLoss, self).__init__(**kwargs)
+        super(AdditiveAngularMarginLoss, self).__init__(**kwargs)
 
     def call(self, y_true, y_pred):
         cos_t = y_pred

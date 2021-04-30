@@ -3,7 +3,7 @@ import pytest
 import tensorflow as tf
 from numpy.testing import assert_almost_equal
 
-from arcface import Angle, ArcFaceLoss
+from arcface import Angle, AdditiveAngularMarginLoss
 
 
 class TestAngleLayer:
@@ -53,7 +53,7 @@ class TestArcFaceLoss:
 
     @pytest.fixture
     def loss(self):
-        return ArcFaceLoss(
+        return AdditiveAngularMarginLoss(
             loss_func=self.loss_func, margin=self.margin, scale=self.scale
         )
 

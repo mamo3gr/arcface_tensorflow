@@ -1,4 +1,4 @@
-from math import cos, sin
+from math import cos, pi, sin
 from typing import Optional
 
 import tensorflow as tf
@@ -62,6 +62,7 @@ class AdditiveAngularMarginLoss(tf.keras.losses.Loss):
         self.scale = scale
         self.cos_m = tf.constant(cos(self.margin))
         self.sin_m = tf.constant(sin(self.margin))
+        self.th = tf.constant(cos(pi - self.margin))
         super(AdditiveAngularMarginLoss, self).__init__(**kwargs)
 
     def call(self, y_true, y_pred):
@@ -70,7 +71,9 @@ class AdditiveAngularMarginLoss(tf.keras.losses.Loss):
 
         # cos(t + m) = cos(t)cos(m) - sin(t)sin(m)
         cos_t_plus_m = tf.subtract(cos_t * self.cos_m, sin_t * self.sin_m)
-        cos_t_plus_m = tf.where(cos_t_plus_m > 0, cos_t_plus_m, cos_t)
+
+        # if (t + m) > pi, use cos(t) instead of cos(t + m)
+        cos_t_plus_m = tf.where(cos_t > self.th, cos_t_plus_m, cos_t)
 
         logits = tf.where(y_true > 0, cos_t_plus_m, cos_t)
         logits = tf.multiply(logits, self.scale)

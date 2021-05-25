@@ -54,7 +54,7 @@ class TestAngleLayer:
 
 
 class TestArcFaceLoss:
-    margin = 0.2 * np.pi
+    margin = 0.4 * np.pi
     scale = 5
     loss_func = tf.keras.losses.CategoricalCrossentropy()
 
@@ -72,15 +72,17 @@ class TestArcFaceLoss:
         ], dtype=np.int)
         angles = np.array([
             [0.25 * np.pi, 0.20 * np.pi],
-            [0.45 * np.pi, 0.10 * np.pi],  # 0.45pi + 0.20pi (margin) > 0.5pi = pi/2
+            [0.80 * np.pi, 0.10 * np.pi],  # 0.80pi + 0.40pi (margin) = 1.20pi > pi
         ], dtype=np.float32)
         # fmt: on
         y_pred = np.cos(angles)
 
         # add margin to theta (angle) if corresponding class is true positive
         cos_t_plus_m = np.cos(angles + np.where((y_true == 1), self.margin, 0))
-        # if cos(t + m) is negative, use cos(t)
-        cos_t_plus_m = np.where(cos_t_plus_m < 0, np.cos(angles), cos_t_plus_m)
+        # if (t + m) > pi, use cos(t)
+        cos_t_plus_m = np.where(
+            angles + self.margin > np.pi, np.cos(angles), cos_t_plus_m
+        )
         softmax = self._softmax(cos_t_plus_m * self.scale, axis=1)
         loss_expect = self.loss_func(y_true, softmax.astype(np.float32))
 

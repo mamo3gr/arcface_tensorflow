@@ -26,7 +26,7 @@ def create_model(
     if use_pretrain:
         weights = "imagenet"
 
-    backbone = tf.keras.applications.InceptionResNetV2(
+    backbone = tf.keras.applications.EfficientNetB0(
         input_shape=input_shape,
         include_top=False,
         weights=weights,

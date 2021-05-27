@@ -8,6 +8,8 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.7"
 tensorflow = "*"
+bcolz = "*"
+PyYAML = "*"
 
 [tool.poetry.dev-dependencies]
 mypy = "*"

@@ -10,6 +10,7 @@ python = "^3.7"
 tensorflow = "*"
 bcolz = "*"
 PyYAML = "*"
+jupyter = "*"
 
 [tool.poetry.dev-dependencies]
 mypy = "*"

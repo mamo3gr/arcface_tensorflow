@@ -1,6 +1,10 @@
 MYPY_CONFIG_FILE = mypy.ini
 FLAKE8_CONFIG_FILE = .flake8
 
+.PHONY: dep
+dep:
+	@poetry install --no-root
+
 .PHONY: format
 format:
 	@poetry run black .

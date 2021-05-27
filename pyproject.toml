@@ -15,21 +15,13 @@ jupyter = "*"
 [tool.poetry.dev-dependencies]
 mypy = "*"
 black = { version = "*", allow-prereleases = true }
-isort = "*"
+isort = {version = "*", extras = ["pyproject"]}
 flake8 = "*"
 pytest = "*"
 pytest-cov = "*"
 
-# Reference:
-#   Black compatible configurations — Black 20.8b2.dev1 documentation
-#   https://black.readthedocs.io/en/stable/compatible_configs.html
 [tool.isort]
-multi_line_output = 3
-include_trailing_comma = true
-force_grid_wrap = 0
-use_parentheses = true
-ensure_newline_before_comments = true
-line_length = 88
+profile = "black"
 
 [build-system]
 requires = ["poetry>=0.12"]

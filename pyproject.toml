@@ -3,7 +3,7 @@ name = "arcface_tensorflow"
 version = "0.1.0"
 description = ""
 authors = ["Mamoru Miura <mamo3gr@gmail.com>"]
-license = "MIT"
+license = "Apache-2.0"
 
 [tool.poetry.dependencies]
 python = "^3.7"

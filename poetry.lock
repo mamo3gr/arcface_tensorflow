@@ -95,20 +95,6 @@ python-versions = "*"
 version = "0.2.0"
 
 [[package]]
-category = "main"
-description = "columnar and compressed data containers."
-name = "bcolz"
-optional = false
-python-versions = "*"
-version = "1.2.1"
-
-[package.dependencies]
-numpy = ">=1.7"
-
-[package.extras]
-optional = ["numexpr (>=2.5.2)", "dask (>=0.9.0)", "pandas", "tables"]
-
-[[package]]
 category = "dev"
 description = "The uncompromising code formatter."
 name = "black"
@@ -1037,7 +1023,7 @@ six = ">=1.9"
 [[package]]
 category = "main"
 description = "Run a subprocess in a pseudo terminal"
-marker = "sys_platform != \"win32\" or os_name != \"nt\" or python_version >= \"3.3\" and sys_platform != \"win32\""
+marker = "python_version >= \"3.3\" and sys_platform != \"win32\" or sys_platform != \"win32\" or os_name != \"nt\" or python_version >= \"3.3\" and sys_platform != \"win32\" and (python_version >= \"3.3\" and sys_platform != \"win32\" or sys_platform != \"win32\")"
 name = "ptyprocess"
 optional = false
 python-versions = "*"
@@ -1637,7 +1623,7 @@ docs = ["sphinx", "jaraco.packaging (>=8.2)", "rst.linker (>=1.9)"]
 testing = ["pytest (>=4.6)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pytest-cov", "pytest-enabler", "jaraco.itertools", "func-timeout", "pytest-black (>=0.3.7)", "pytest-mypy"]
 
 [metadata]
-content-hash = "9de29ca9d5c548334f98085179663b80e8a6604c60c582a3edff6bafb55fcddc"
+content-hash = "e227954b4be1dbe6f07da82719a89ee4d9cfefa9da0acb8ab02b8f9d9fb618d8"
 lock-version = "1.0"
 python-versions = "^3.7"
 
@@ -1691,9 +1677,6 @@ attrs = [
 backcall = [
     {file = "backcall-0.2.0-py2.py3-none-any.whl", hash = "sha256:fbbce6a29f263178a1f7915c1940bde0ec2b2a967566fe1c65c1dfb7422bd255"},
     {file = "backcall-0.2.0.tar.gz", hash = "sha256:5cbdbf27be5e7cfadb448baf0aa95508f91f2bbc6c6437cd9cd06e2a4c215e1e"},
-]
-bcolz = [
-    {file = "bcolz-1.2.1.tar.gz", hash = "sha256:c017d09bb0cb5bbb07f2ae223a3f3638285be3b574cb328e91525b2880300bd1"},
 ]
 black = [
     {file = "black-21.5b2-py3-none-any.whl", hash = "sha256:e5cf21ebdffc7a9b29d73912b6a6a9a4df4ce70220d523c21647da2eae0751ef"},

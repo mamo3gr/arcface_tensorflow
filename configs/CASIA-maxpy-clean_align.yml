@@ -1,4 +1,4 @@
-root_dir: "~/datasets/CASIA-maxpy-clean_align/"
+root_dir: "/datasets/CASIA-maxpy-clean_align/"
 split: "train"
 n_classes: 10575
 input_shape: !!python/tuple [112, 112, 3]
@@ -7,7 +7,7 @@ scale: 64
 embedding_dimension: 512
 momentum: 0.9
 weight_decay: !!float 5e-4
-batch_size: 128
+batch_size: 256
 epochs: 120
 seed: 42
 model_path: "./model/weights.hdf5"

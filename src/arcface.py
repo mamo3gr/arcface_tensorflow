@@ -56,13 +56,15 @@ class Angle(tf.keras.layers.Layer):
 
 
 class AdditiveAngularMarginLoss(tf.keras.losses.Loss):
-    def __init__(self, loss_func, margin: float, scale: float, **kwargs):
+    def __init__(
+        self, loss_func, margin: float, scale: float, dtype=tf.float32, **kwargs
+    ):
         self.loss_func = loss_func
         self.margin = margin
         self.scale = scale
-        self.cos_m = tf.constant(cos(self.margin))
-        self.sin_m = tf.constant(sin(self.margin))
-        self.th = tf.constant(cos(pi - self.margin))
+        self.cos_m = tf.constant(cos(self.margin), dtype=dtype)
+        self.sin_m = tf.constant(sin(self.margin), dtype=dtype)
+        self.th = tf.constant(cos(pi - self.margin), dtype=dtype)
         super(AdditiveAngularMarginLoss, self).__init__(**kwargs)
 
     def call(self, y_true, y_pred):

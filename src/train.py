@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
 from logging import INFO, basicConfig, getLogger
-from typing import Tuple
+from typing import Optional, Tuple
 
 import tensorflow as tf
 import tensorflow_datasets as tfds
@@ -51,9 +51,15 @@ def main(
     epochs: int,
     seed: int,
     model_path: str,
+    precision_policy: Optional[str] = None,
     **kwargs,
 ):
     set_gpu_memory_growth()
+
+    if precision_policy is None:
+        precision_policy = "float32"
+    policy = tf.keras.mixed_precision.Policy(precision_policy)
+    tf.keras.mixed_precision.set_global_policy(policy)
 
     read_config = tfds.ReadConfig(shuffle_seed=seed)
     builder = tfds.ImageFolder(root_dir)
@@ -132,6 +138,7 @@ def main(
                 loss_func=tf.keras.losses.CategoricalCrossentropy(),
                 margin=margin,
                 scale=scale,
+                dtype=policy.compute_dtype,
             ),
             x_min=tf.keras.backend.epsilon(),
             x_max=1.0,

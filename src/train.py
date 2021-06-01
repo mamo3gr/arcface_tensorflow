@@ -63,7 +63,7 @@ def main(
 
     read_config = tfds.ReadConfig(shuffle_seed=seed)
     builder = tfds.ImageFolder(root_dir)
-    ds = builder.as_dataset(
+    ds: tf.data.Dataset = builder.as_dataset(
         split=split,
         batch_size=batch_size,
         shuffle_files=True,
@@ -85,7 +85,7 @@ def main(
         ]
     )
 
-    ds: tf.data.Dataset = (
+    ds = (
         ds.map(lambda x, y: (preprocess_input(x), y), num_parallel_calls=AUTOTUNE)
         .map(lambda x, y: (data_augmentation(x), y), num_parallel_calls=AUTOTUNE)
         .unbatch()

@@ -18,7 +18,7 @@ from arcface import AdditiveAngularMarginLoss
 from config_loader import load_setting
 from losses import ClippedValueLoss
 from model import create_model
-from utils import set_gpu_memory_growth
+from utils import get_strategy, set_gpu_memory_growth
 
 basicConfig(level=INFO)
 logger = getLogger(__name__)
@@ -111,10 +111,10 @@ def main(
     optimizer = tf.keras.optimizers.SGD(momentum=momentum)
 
     model_checkpoint = ModelCheckpoint(
-        # "./model/weights.{epoch:03d}-{val_loss:.3f}.hdf5",
-        model_path,
+        "./model/weights.{epoch:03d}-{val_loss:.3f}.hdf5",
+        # model_path,
         monitor="val_loss",
-        save_best_only=True,
+        save_best_only=False,
     )
 
     def scheduler(epoch, lr):
@@ -131,20 +131,23 @@ def main(
 
     tensorboard_callback = tf.keras.callbacks.TensorBoard(histogram_freq=1)
 
-    model.compile(
-        optimizer=optimizer,
-        loss=ClippedValueLoss(
-            loss_func=AdditiveAngularMarginLoss(
-                loss_func=tf.keras.losses.CategoricalCrossentropy(),
-                margin=margin,
-                scale=scale,
-                dtype=policy.compute_dtype,
+    strategy = get_strategy()
+    with strategy.scope():
+        model.compile(
+            optimizer=optimizer,
+            loss=ClippedValueLoss(
+                loss_func=AdditiveAngularMarginLoss(
+                    loss_func=tf.keras.losses.CategoricalCrossentropy(),
+                    margin=margin,
+                    scale=scale,
+                    dtype=policy.compute_dtype,
+                ),
+                x_min=tf.keras.backend.epsilon(),
+                x_max=1.0,
             ),
-            x_min=tf.keras.backend.epsilon(),
-            x_max=1.0,
-        ),
-        metrics=[tf.keras.metrics.CategoricalAccuracy()],
-    )
+            metrics=[tf.keras.metrics.CategoricalAccuracy()],
+        )
+
     model.fit(
         train_ds,
         batch_size=batch_size,

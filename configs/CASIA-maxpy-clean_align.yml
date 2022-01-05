@@ -1,4 +1,4 @@
-root_dir: "/datasets/CASIA-maxpy-clean_align/"
+root_dir: "/home/mamo/datasets/CASIA-maxpy-clean_align/"
 split: "train"
 n_classes: 10575
 input_shape: !!python/tuple [112, 112, 3]
